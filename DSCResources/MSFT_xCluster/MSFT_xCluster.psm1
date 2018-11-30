@@ -110,6 +110,11 @@ function Get-TargetResource
     .PARAMETER DomainAdministratorCredential
         Credential used to create the failover cluster in Active Directory.
 
+    .PARAMETER Nodes
+        Array of additional nodes to add to the cluster at creation time.
+        Defaults to the current computer ($env:COMPUTERNAME) if none are
+        specified.
+
     .NOTES
         If the cluster does not exist, it will be created in the domain and the
         static IP address will be assigned to the cluster.
@@ -137,7 +142,11 @@ function Set-TargetResource
 
         [Parameter(Mandatory = $true)]
         [System.Management.Automation.PSCredential]
-        $DomainAdministratorCredential
+        $DomainAdministratorCredential,
+
+        [Parameter(Mandatory = $true)]
+        [System.String[]]
+        $Nodes = $env:COMPUTERNAME
     )
 
     $bCreate = $true
@@ -175,7 +184,7 @@ function Set-TargetResource
 
             $newClusterParameters = @{
               Name          = $Name
-              Node          = $env:COMPUTERNAME
+              Node          = $Nodes
               NoStorage     = $true
               ErrorAction   = 'Stop'
             }
